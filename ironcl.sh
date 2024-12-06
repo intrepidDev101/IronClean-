@@ -15,9 +15,13 @@ load_config() {
     else
         echo -e "\e[1;36mWelcome to IronClean!\e[0m"
         echo -e "\e[1;33mFirst time? Let's configure your email address!\e[0m"
-        read -p "Enter your email address for notifications: " user_email
-        echo "USER_EMAIL=\"$user_email\"" > "$CONFIG_FILE"
-        echo "Configuration saved."
+        read -p "Enter your email address for notifications (optional, press Enter to skip): " user_email
+        if [[ -n "$user_email" ]]; then
+            echo "USER_EMAIL=\"$user_email\"" > "$CONFIG_FILE"
+            echo "Configuration saved."
+        else
+            echo "No email provided. You can set it later using --email."
+        fi
     fi
 }
 
@@ -177,9 +181,13 @@ main() {
             print_success "Scheduled weekly cleanup."
             ;;
         --email)
-            read -p "Enter new email address: " user_email
-            echo "USER_EMAIL=\"$user_email\"" > "$CONFIG_FILE"
-            print_success "Email updated to $user_email."
+            read -p "Enter new email address (leave empty to skip): " user_email
+            if [[ -n "$user_email" ]]; then
+                echo "USER_EMAIL=\"$user_email\"" > "$CONFIG_FILE"
+                print_success "Email updated to $user_email."
+            else
+                print_warning "Email update skipped."
+            fi
             ;;
         *)
             show_banner
